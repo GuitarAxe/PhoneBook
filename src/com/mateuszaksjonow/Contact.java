@@ -3,8 +3,6 @@ package com.mateuszaksjonow;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public abstract class Contact implements Serializable {
     private String name;
@@ -39,7 +37,7 @@ public abstract class Contact implements Serializable {
             this.phoneNumber = phoneNumber;
         }else {
             System.out.println("Wrong number format!");
-            setPhoneNumber("[no number]");
+            this.phoneNumber = ("[no number]");
         }
     }
 
@@ -56,41 +54,7 @@ public abstract class Contact implements Serializable {
     }
 
     static public boolean checkNumber(String number) {
-        String[] splittedNumber = number.split("[ \\-]");
-        boolean parenthesis = false;
-        boolean correct = true;
-        for (int i = 0; i < splittedNumber.length; i++) {
-            if (isMatched("\\+?\\(\\w+\\)", splittedNumber[i])) {
-                if (i < 2 && !parenthesis) {
-                    parenthesis = true;
-                }else {
-                    correct = false;
-                }
-            }
-            if (i > 0 && isMatched("\\w{1}", splittedNumber[i])) {
-                correct = false;
-            }
-            if (isMatched("\\w*\\W+\\w*", splittedNumber[i])) {
-                if (i == 0) {
-                    if (!isMatched("\\+\\w", splittedNumber[i])) {
-                        correct = false;
-                    }
-                }else {
-                    correct = false;
-                }
-            }
-        }
-        return correct;
-    }
-
-    static public boolean isMatched(String regex, String input) {
-        if (input == null) {
-//            System.out.println("Null: isMatched");
-            return false;
-        }else {
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(input);
-            return matcher.matches();
-        }
+        String str = "^\\s?((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?\\s?";
+        return number.matches(str);
     }
 }
