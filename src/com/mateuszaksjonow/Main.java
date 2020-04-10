@@ -1,13 +1,21 @@
 package com.mateuszaksjonow;
 
-import java.util.*;
+import java.io.*;
+import java.util.InputMismatchException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
         List<Contact> contactList = new LinkedList<>();
-//        System.out.println("open phonebook.db");
+//        File phoneBook = new File("phoneBook.bin");
+        if (deserialize("phoneBook.bin") != null) {
+            contactList = (List<Contact>) deserialize("phoneBook.bin");
+        }
+        System.out.println("open phonebook.db");
         mainMenu(contactList, scanner);
     }
 
@@ -18,6 +26,7 @@ public class Main {
             switch (scanner.nextLine()) {
                 case "add":
                     addContact(list, scanner);
+                    serialize(list, "phoneBook.bin");
                     break;
                 case "list":
                     listMenu(list, scanner);
@@ -68,9 +77,9 @@ public class Main {
             String input = scanner.nextLine();
             if (input.equalsIgnoreCase("menu")) {
                 exit = true;
-            }else if (input.equalsIgnoreCase("again")) {
+            } else if (input.equalsIgnoreCase("again")) {
                 search(list, scanner);
-            }else {
+            } else {
                 //Try to enter record
                 try {
                     int index = Integer.parseInt(input);
@@ -100,7 +109,7 @@ public class Main {
                     listToPrint.add(person);
                 }
                 //Searching in organization fields
-            }else if (contact.type().equalsIgnoreCase("organization")) {
+            } else if (contact.type().equalsIgnoreCase("organization")) {
                 Organization organization = (Organization) contact;
                 if (organization.getName().toLowerCase().contains(input.toLowerCase())
                         || organization.getAddress().toLowerCase().contains(input.toLowerCase())
@@ -115,11 +124,10 @@ public class Main {
             System.out.println("No matches found");
             System.out.println();
             return false;
-        }else if (counter == 1) {
+        } else if (counter == 1) {
             System.out.println("Found 1 result:");
             printContacts(listToPrint);
-        }
-        else {
+        } else {
             System.out.println("Found " + counter + " results:");
             printContacts(listToPrint);
         }
@@ -134,10 +142,12 @@ public class Main {
             switch (scanner.nextLine()) {
                 case "edit":
                     editContact(contact, scanner);
+                    serialize(list, "phoneBook.bin");
                     exit = true;
                     break;
                 case "delete":
                     removeContact(list, contact);
+                    serialize(list, "phoneBook.bin");
                     exit = true;
                     break;
                 case "menu":
@@ -155,7 +165,7 @@ public class Main {
             System.out.println("The contact list is empty!");
         } else {
             for (int i = 0; i < list.size(); i++) {
-                if (list.get(i).isPerson) {
+                if (list.get(i).type().equalsIgnoreCase("person")) {
                     System.out.println(i + 1 + ". " + list.get(i).getName() + " " + ((Person) list.get(i)).getSurname());
                 } else {
                     System.out.println(i + 1 + ". " + list.get(i).getName());
@@ -166,7 +176,7 @@ public class Main {
     }
 
     private static void info(List<Contact> list, int index) {
-        index-=1;
+        index -= 1;
         if (index > list.size()) {
             System.out.println("No such record");
         } else {
@@ -238,11 +248,29 @@ public class Main {
         if (contact.type().equalsIgnoreCase("person")) {
             Person person = (Person) contact;
             person.edit(person, scanner);
-        } else if (contact.type().equalsIgnoreCase("organization")){
+        } else if (contact.type().equalsIgnoreCase("organization")) {
             Organization organization = (Organization) contact;
             organization.edit(organization, scanner);
         }
         contactInfo(contact);
         System.out.println();
+    }
+
+    public static void serialize(Object obj, String fileName) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(fileName)))) {
+            oos.writeObject(obj);
+        }catch (IOException e) {
+            e.getMessage();
+        }
+    }
+
+    public static Object deserialize(String fileName) {
+        try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fileName)))) {
+            Object obj = ois.readObject();
+            return obj;
+        }catch (IOException | ClassNotFoundException e) {
+            e.getMessage();
+        }
+        return null;
     }
 }

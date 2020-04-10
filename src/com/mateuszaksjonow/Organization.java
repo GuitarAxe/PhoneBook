@@ -1,16 +1,17 @@
 package com.mateuszaksjonow;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Scanner;
 
-public class Organization extends Contact {
+public class Organization extends Contact implements Serializable {
 
     private String address;
+    private static final long serialVersionUID = 7L;
 
     public Organization(String name, String phoneNumber, String address) {
         super(name, phoneNumber);
         this.address = address;
-        isPerson = false;
     }
 
     @Override

@@ -1,16 +1,17 @@
 package com.mateuszaksjonow;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class Contact {
+public abstract class Contact implements Serializable {
     private String name;
     private String phoneNumber;
     private final LocalDateTime whenCreated = LocalDateTime.now();
-    private LocalDateTime whenLastEdited;
-    public boolean isPerson;
+    private  LocalDateTime whenLastEdited;
+    private static final long serialVersionUID = 7L;
 
     public abstract String type();
     public abstract Contact edit(Contact contact, Scanner scanner);

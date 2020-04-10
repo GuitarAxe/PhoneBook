@@ -1,22 +1,24 @@
 package com.mateuszaksjonow;
 
+import java.io.Serializable;
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class Person extends Contact {
+public class Person extends Contact implements Serializable {
 
     private String surname;
     private LocalDate birthDate;
     private String gender;
+    private static final long serialVersionUID = 7L;
 
     public Person(String name, String phoneNumber, String surname, LocalDate birthDate, String gender) {
         super(name, phoneNumber);
         this.surname = surname;
         this.birthDate = birthDate;
         this.gender = gender;
-        isPerson = true;
     }
 
     public String getSurname() {
@@ -119,9 +121,8 @@ public class Person extends Contact {
                     for (int i = 0; i < splittedInput.length; i++) {
                         date[i] = Integer.parseInt(splittedInput[i]);
                     }
-                    this.birthDate = LocalDate.of(date[0], date[1], date[2]);
                 }
-            }catch (InputMismatchException | NumberFormatException e) {
+            }catch (InputMismatchException | NumberFormatException | DateTimeException e) {
                 System.out.println("Bad birth date!");
             }
             return this;
