@@ -11,11 +11,10 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
         List<Contact> contactList = new LinkedList<>();
-//        File phoneBook = new File("phoneBook.bin");
         if (deserialize("phoneBook.bin") != null) {
             contactList = (List<Contact>) deserialize("phoneBook.bin");
         }
-        System.out.println("open phonebook.db");
+        System.out.println("open phonebook.bin");
         mainMenu(contactList, scanner);
     }
 
@@ -256,7 +255,7 @@ public class Main {
         System.out.println();
     }
 
-    public static void serialize(Object obj, String fileName) {
+    private static void serialize(Object obj, String fileName) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(fileName)))) {
             oos.writeObject(obj);
         }catch (IOException e) {
@@ -264,7 +263,7 @@ public class Main {
         }
     }
 
-    public static Object deserialize(String fileName) {
+    private static Object deserialize(String fileName) {
         try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fileName)))) {
             Object obj = ois.readObject();
             return obj;
